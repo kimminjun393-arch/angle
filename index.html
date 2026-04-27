@@ -1,0 +1,299 @@
+import React, { useState } from 'react';
+import { Atom, CheckCircle2, XCircle, ArrowRight, RotateCcw, Award } from 'lucide-react';
+
+const quizData = [
+  {
+    id: 1,
+    molecule: "이산화탄소 (CO₂)",
+    description: "중심 원자 C의 양쪽에 산소(O)가 각각 이중 결합으로 연결되어 있습니다.",
+    question: "이때 O-C-O의 결합각은 몇 도일까요?",
+    options: ["104.5°", "109.5°", "120°", "180°"],
+    answerIndex: 3,
+    explanation: "중심 원자에 비공유 전자쌍이 없어 직선형 구조를 가집니다."
+  },
+  {
+    id: 2,
+    molecule: "붕소 하이드라이드 (BH₃)",
+    description: "중심 원자 B 주위에 세 개의 수소(H)가 단일 결합으로 연결되어 있습니다.",
+    question: "이때 H-B-H의 결합각은 몇 도일까요?",
+    options: ["107°", "109.5°", "120°", "180°"],
+    answerIndex: 2,
+    explanation: "중심 원자에 비공유 전자쌍이 없어 평면삼각형 구조를 가집니다."
+  },
+  {
+    id: 3,
+    molecule: "메테인 (CH₄)",
+    description: "중심 원자 C 주위에 네 개의 수소(H)가 단일 결합으로 연결되어 있습니다.",
+    question: "이때 H-C-H의 결합각은 몇 도일까요?",
+    options: ["104.5°", "109.5°", "120°", "180°"],
+    answerIndex: 1,
+    explanation: "중심 원자에 비공유 전자쌍이 없어 정사면체형 구조를 가집니다."
+  },
+  {
+    id: 4,
+    molecule: "암모니아 (NH₃)",
+    description: "중심 원자 N 주위에 세 개의 수소(H)가 단일 결합으로 연결되어 있습니다.",
+    question: "이때 H-N-H의 결합각은 약 몇 도일까요?",
+    options: ["104.5°", "107°", "109.5°", "120°"],
+    answerIndex: 1,
+    explanation: "중심 원자에 1개의 비공유 전자쌍이 존재하여 피라미드형 구조를 가집니다."
+  },
+  {
+    id: 5,
+    molecule: "물 (H₂O)",
+    description: "중심 원자 O 주위에 두 개의 수소(H)가 단일 결합으로 연결되어 있습니다.",
+    question: "이때 H-O-H의 결합각은 약 몇 도일까요?",
+    options: ["90°", "104.5°", "107°", "109.5°"],
+    answerIndex: 1,
+    explanation: "중심 원자에 2개의 비공유 전자쌍이 존재하여 굽은형 구조를 가집니다."
+  },
+  {
+    id: 6,
+    molecule: "폼알데하이드 (CH₂O)",
+    description: "중심 원자 C에 산소(O) 하나가 이중 결합, 수소(H) 두 개가 단일 결합으로 연결되어 있습니다.",
+    question: "이때 H-C-H의 결합각은 약 몇 도일까요?",
+    options: ["104.5°", "109.5°", "약 120°", "180°"],
+    answerIndex: 2,
+    explanation: "중심 원자에 비공유 전자쌍이 없어 평면삼각형 구조를 가집니다."
+  },
+  {
+    id: 7,
+    molecule: "사이안화 수소 (HCN)",
+    description: "중심 원자 C에 수소(H)가 단일 결합, 질소(N)가 삼중 결합으로 연결되어 있습니다.",
+    question: "이때 H-C-N의 결합각은 몇 도일까요?",
+    options: ["104.5°", "109.5°", "120°", "180°"],
+    answerIndex: 3,
+    explanation: "중심 원자에 비공유 전자쌍이 없어 직선형 구조를 가집니다."
+  },
+  {
+    id: 8,
+    molecule: "삼염화 인 (PCl₃)",
+    description: "중심 원자 P 주위에 세 개의 염소(Cl)가 단일 결합으로 연결되어 있습니다.",
+    question: "이때 Cl-P-Cl의 결합각은 약 몇 도일까요?",
+    options: ["104.5°", "107°", "109.5°", "120°"],
+    answerIndex: 1,
+    explanation: "중심 원자에 1개의 비공유 전자쌍이 존재하여 피라미드형 구조를 가집니다."
+  },
+  {
+    id: 9,
+    molecule: "글라이신 (아미노산, NH₂CH₂COOH)",
+    description: "카복실기(-COOH) 부분의 탄소(C)는 하나의 산소(O)와 이중 결합, 또 다른 산소(O) 및 인접한 탄소(C)와 각각 단일 결합으로 연결되어 있습니다.",
+    question: "이때 카복실기 내부의 O-C-O 결합각은 약 몇 도일까요?",
+    options: ["104.5°", "109.5°", "약 120°", "180°"],
+    answerIndex: 2,
+    explanation: "해당 탄소 원자에 비공유 전자쌍이 없어 평면삼각형 구조를 가집니다."
+  },
+  {
+    id: 10,
+    molecule: "아세트산 (식초의 주성분, CH₃COOH)",
+    description: "카복실기(-COOH) 끝부분의 산소(O) 원자는 탄소(C) 및 수소(H)와 각각 단일 결합으로만 연결되어 있습니다.",
+    question: "이때 C-O-H 부분의 결합각은 약 몇 도일까요?",
+    options: ["약 104.5°", "약 107°", "약 109.5°", "약 120°"],
+    answerIndex: 0,
+    explanation: "해당 산소 원자에 2개의 비공유 전자쌍이 존재하여 굽은형 구조를 가집니다."
+  }
+];
+
+export default function App() {
+  const [hasStarted, setHasStarted] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedOptionIndex, setSelectedOptionIndex] = useState(null);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [score, setScore] = useState(0);
+  const [isFinished, setIsFinished] = useState(false);
+
+  const currentQuestion = quizData[currentQuestionIndex];
+  const progressPercentage = ((currentQuestionIndex) / quizData.length) * 100;
+
+  const handleStart = () => {
+    setHasStarted(true);
+  };
+
+  const handleOptionClick = (index) => {
+    if (showExplanation) return; // 이미 답을 골랐다면 무시
+    
+    setSelectedOptionIndex(index);
+    setShowExplanation(true);
+    
+    if (index === currentQuestion.answerIndex) {
+      setScore((prev) => prev + 1);
+    }
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < quizData.length - 1) {
+      setCurrentQuestionIndex((prev) => prev + 1);
+      setSelectedOptionIndex(null);
+      setShowExplanation(false);
+    } else {
+      setIsFinished(true);
+    }
+  };
+
+  const handleRestart = () => {
+    setHasStarted(false);
+    setCurrentQuestionIndex(0);
+    setSelectedOptionIndex(null);
+    setShowExplanation(false);
+    setScore(0);
+    setIsFinished(false);
+  };
+
+  // --- 화면 1: 시작 화면 ---
+  if (!hasStarted) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden text-center p-8 border border-slate-100">
+          <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Atom className="w-10 h-10 text-blue-600" />
+          </div>
+          <h1 className="text-3xl font-bold text-slate-800 mb-4">분자 구조 및<br/>결합각 퀴즈</h1>
+          <p className="text-slate-600 mb-8 leading-relaxed">
+            루이스 구조식과 VSEPR 이론을 바탕으로<br/>주요 분자들의 결합각을 맞춰보세요!
+          </p>
+          <button
+            onClick={handleStart}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-all active:scale-95 shadow-lg shadow-blue-200"
+          >
+            퀴즈 시작하기
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // --- 화면 3: 결과 화면 ---
+  if (isFinished) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden text-center p-8 border border-slate-100">
+          <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Award className="w-12 h-12 text-yellow-500" />
+          </div>
+          <h2 className="text-3xl font-bold text-slate-800 mb-2">퀴즈 완료!</h2>
+          <p className="text-slate-500 mb-6">총 {quizData.length}문제 중</p>
+          
+          <div className="text-6xl font-black text-blue-600 mb-8">
+            {score} <span className="text-2xl text-slate-400 font-medium">점</span>
+          </div>
+
+          <div className="bg-slate-50 rounded-2xl p-6 mb-8 text-sm text-slate-600 leading-relaxed">
+            {score === 10 ? '완벽합니다! 화학 결합각의 마스터네요! 🎉' : 
+             score >= 7 ? '훌륭합니다! 조금만 더 복습하면 완벽해질 거예요. 👍' : 
+             '괜찮아요! 해설을 다시 읽어보며 개념을 다져봅시다. 💪'}
+          </div>
+
+          <button
+            onClick={handleRestart}
+            className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 px-8 rounded-xl transition-all active:scale-95"
+          >
+            <RotateCcw className="w-5 h-5" /> 다시 도전하기
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // --- 화면 2: 퀴즈 진행 화면 ---
+  return (
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+      <div className="max-w-2xl w-full">
+        
+        {/* 프로그레스 바 */}
+        <div className="mb-6 px-2">
+          <div className="flex justify-between text-sm font-medium text-slate-500 mb-2">
+            <span>문제 {currentQuestionIndex + 1} / {quizData.length}</span>
+            <span>점수: {score}</span>
+          </div>
+          <div className="w-full bg-slate-200 rounded-full h-2.5">
+            <div 
+              className="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${progressPercentage}%` }}
+            ></div>
+          </div>
+        </div>
+
+        {/* 퀴즈 카드 */}
+        <div className="bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden">
+          
+          {/* 질문 영역 */}
+          <div className="p-6 sm:p-8 border-b border-slate-100">
+            <div className="inline-block bg-blue-50 text-blue-700 font-bold px-3 py-1 rounded-lg text-sm mb-4">
+              {currentQuestion.molecule}
+            </div>
+            <div className="bg-slate-50 p-4 rounded-xl mb-6 text-slate-700 text-sm sm:text-base leading-relaxed border border-slate-100">
+              {currentQuestion.description}
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
+              {currentQuestion.question}
+            </h2>
+          </div>
+
+          {/* 선택지 영역 */}
+          <div className="p-6 sm:p-8 bg-slate-50">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {currentQuestion.options.map((option, index) => {
+                const isSelected = selectedOptionIndex === index;
+                const isCorrect = index === currentQuestion.answerIndex;
+                const showCorrect = showExplanation && isCorrect;
+                const showIncorrect = showExplanation && isSelected && !isCorrect;
+
+                let buttonClass = "relative flex items-center justify-between w-full p-4 sm:p-5 rounded-2xl border-2 text-left transition-all duration-200 font-medium text-lg ";
+                
+                if (!showExplanation) {
+                  buttonClass += "border-slate-200 bg-white hover:border-blue-400 hover:bg-blue-50 text-slate-700 active:scale-[0.98]";
+                } else if (showCorrect) {
+                  buttonClass += "border-green-500 bg-green-50 text-green-800";
+                } else if (showIncorrect) {
+                  buttonClass += "border-red-500 bg-red-50 text-red-800";
+                } else {
+                  buttonClass += "border-slate-200 bg-white text-slate-400 opacity-60";
+                }
+
+                return (
+                  <button
+                    key={index}
+                    onClick={() => handleOptionClick(index)}
+                    disabled={showExplanation}
+                    className={buttonClass}
+                  >
+                    <span>{option}</span>
+                    {showCorrect && <CheckCircle2 className="w-6 h-6 text-green-500" />}
+                    {showIncorrect && <XCircle className="w-6 h-6 text-red-500" />}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 해설 및 다음 버튼 */}
+            {showExplanation && (
+              <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className={`p-5 sm:p-6 rounded-2xl mb-6 ${
+                  selectedOptionIndex === currentQuestion.answerIndex 
+                    ? "bg-green-100/50 border border-green-200" 
+                    : "bg-red-100/50 border border-red-200"
+                }`}>
+                  <h3 className={`font-bold flex items-center gap-2 mb-2 ${
+                    selectedOptionIndex === currentQuestion.answerIndex ? "text-green-800" : "text-red-800"
+                  }`}>
+                    {selectedOptionIndex === currentQuestion.answerIndex ? '정답입니다! 🎉' : '아쉽네요! 정답은 ' + currentQuestion.options[currentQuestion.answerIndex] + '입니다.'}
+                  </h3>
+                  <p className="text-slate-700 text-sm sm:text-base leading-relaxed">
+                    {currentQuestion.explanation}
+                  </p>
+                </div>
+                
+                <button
+                  onClick={handleNextQuestion}
+                  className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-all active:scale-95 shadow-lg shadow-blue-200"
+                >
+                  {currentQuestionIndex < quizData.length - 1 ? '다음 문제' : '결과 보기'} <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
